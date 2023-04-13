@@ -176,7 +176,6 @@ def close_position_market_price(tSymbol, nickname, side):
                 position_info[0]["unRealizedProfit"]) < 0 else "42f5b9"
         )
     except Exception as e:
-        print(e)
         disbot.webhook_error("Order not cancelled", symbol)
 
 
@@ -324,5 +323,7 @@ def handle_error(e, trade):
     elif str(e) == "APIError(code=-2021): Order would immediately trigger.":
         disbot.webhook_error(
             "Order would immediately trigger", trade['symbol'])
+    elif str(e) == "APIError(code=-4164): Order's notional must be no smaller than 5.0 (unless you choose reduce only)":
+        disbot.webhook_error("Order's notional must be no smaller than 5.0", trade['symbol'])
     else:
         print(e)
