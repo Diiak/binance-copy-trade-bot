@@ -72,7 +72,6 @@ def deleteTraders(values):
 def updateNew():
     cursor = followedTraders.find({})
     if not cursor:
-        #print("Oops, you don't have any traders yet!")
         pass
 
     for uid in cursor:
@@ -142,19 +141,23 @@ def add_new_trade(trade, nickName, existingTrades):
     existingTrades.append(trade)
     print(f"new trade detected: {trade['symbol']} for {nickName}")
 
-    trade_followed = bparser.create_trade(trade, nickName)
+    number_of_threads = len(followedTrades.find({}))
 
-    try:
-        followedTrades.insert_one(
-            {
-                "Trader": nickName,
-                "symbol": trade_followed['symbol'],
-                "amount": -float(trade_followed['origQty']) if type == "sell" else float(trade_followed['origQty']),
-                "type": type,
-            }
-        )
-    except Exception as e:
-        print(e)
+    if config['other-settings']['maxtrades'] == -1 or number_of_threads < config['other-settings']['maxtrades']:
+
+        trade_followed = bparser.create_trade(trade, nickName)
+
+        try:
+            followedTrades.insert_one(
+                {
+                    "Trader": nickName,
+                    "symbol": trade_followed['symbol'],
+                    "amount": -float(trade_followed['origQty']) if type == "sell" else float(trade_followed['origQty']),
+                    "type": type,
+                }
+            )
+        except Exception as e:
+            pass
 
 
 def update_trade(trade, existingTrade, nickName):

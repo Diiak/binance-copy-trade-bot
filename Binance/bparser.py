@@ -30,13 +30,13 @@ def aBalance():
 def leverage(trade):
     config = configparser.ConfigParser()
     config.read('config.ini')
-    mode = config['others-setting']['mode']
+    mode = config['other-settings']['mode']
 
     lev = db.getLeverage(trade['symbol'])
     if lev != 0 and mode == str(1):
         return lev
     elif mode == str(2):
-        dLeverage = config['others-setting']['default-leverage']
+        dLeverage = config['other-settings']['default-leverage']
         return int(dLeverage)
     else:
         return trade['leverage']
@@ -83,7 +83,7 @@ def round_tick(amount, symbol):
 def setQty(trade, leverage):
     config = configparser.ConfigParser()
     config.read('config.ini')
-    percent = int(config['others-setting']['percent'])
+    percent = int(config['other-settings']['percent'])
     tick_info = client.futures_exchange_info()
     symbol_info = next(
         info for info in tick_info["symbols"] if info["symbol"] == trade['symbol'])
@@ -229,9 +229,9 @@ def create_trade(trade, nickname):
     config = configparser.ConfigParser()
     config.read('config.ini')
 
-    if config['others-setting']['TP'] != "0" and config['others-setting']['SL'] != "0" and config['others-setting']['TPSL'] == "True":
-        tp_percent = float(config['others-setting']['TP'])
-        sl_percent = float(config['others-setting']['SL'])
+    if config['other-settings']['TP'] != "0" and config['other-settings']['SL'] != "0" and config['other-settings']['TPSL'] == "True":
+        tp_percent = float(config['other-settings']['TP'])
+        sl_percent = float(config['other-settings']['SL'])
 
         tp, sl = set_tp_sl(trade, tp_percent, sl_percent, leveragee)
 
@@ -257,9 +257,9 @@ def create_trade(trade, nickname):
         disbot.webhook_start("♻️ New Followed Trade : " + nickname, side,
                              trade['symbol'], response["orderId"], response["origQty"], leveragee, trade['entryPrice'], "FFDEAD")
 
-        if config['others-setting']['TP'] != "0" and config['others-setting']['SL'] != "0" and config['others-setting']['TPSL'] == "True":
-            tp_percent = float(config['others-setting']['TP'])
-            sl_percent = float(config['others-setting']['SL'])
+        if config['other-settings']['TP'] != "0" and config['other-settings']['SL'] != "0" and config['other-settings']['TPSL'] == "True":
+            tp_percent = float(config['other-settings']['TP'])
+            sl_percent = float(config['other-settings']['SL'])
 
             tp, sl = set_tp_sl(trade, tp_percent, sl_percent, leveragee)
             TpSl(trade, quantity, tp, sl)
