@@ -124,7 +124,7 @@ async def maxtrades(ctx, *, arg):
     if not arg.isnumeric():
         await ctx.send("❌ Oops, please enter a good value !")
         return
-    update_config("other-settings", "max-trades", arg)
+    update_config("other-settings", "maxtrades", arg)
     await ctx.send(f"✅ Maximum simultaneous trades is now {arg} !")
 
 

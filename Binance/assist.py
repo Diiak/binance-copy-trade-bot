@@ -180,7 +180,7 @@ def unlock():
         client = Client(api_key, api_secret)
         print("Bot unlocked!")
 
-    except:
+    except Exception as e:
         print("Wrong password, please try again!\n")
         unlock()
 

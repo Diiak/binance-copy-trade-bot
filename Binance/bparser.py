@@ -5,6 +5,10 @@ import disbot
 import datetime
 
 
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+
 def isLeverageValid(symbol, leverage):
     bracket = client.futures_leverage_bracket(symbol=symbol)
     return any(bracketInfo['initialLeverage'] > int(leverage) for bracketInfo in bracket[0]["brackets"])
@@ -28,14 +32,12 @@ def aBalance():
 
 
 def leverage(trade):
-    config = configparser.ConfigParser()
-    config.read('config.ini')
     mode = config['other-settings']['mode']
 
     lev = db.getLeverage(trade['symbol'])
     if lev != 0 and mode == str(1):
         return lev
-    elif mode == str(2):
+    elif mode == str(2) or mode == str(3):
         dLeverage = config['other-settings']['default-leverage']
         return int(dLeverage)
     else:
@@ -324,6 +326,10 @@ def handle_error(e, trade):
         disbot.webhook_error(
             "Order would immediately trigger", trade['symbol'])
     elif str(e) == "APIError(code=-4164): Order's notional must be no smaller than 5.0 (unless you choose reduce only)":
-        disbot.webhook_error("Order's notional must be no smaller than 5.0", trade['symbol'])
+        disbot.webhook_error(
+            "Order's notional must be no smaller than 5.0", trade['symbol'])
+    elif str(e) == "APIError(code=-4003): Quantity less than or equal to zero.":
+        disbot.webhook_error(
+            "Quantity less than or equal to zero.", trade['symbol'])
     else:
         print(e)
